@@ -1,88 +1,125 @@
 #pragma once
 
-#include <ctime>
 #include <chrono>
+#include <ctime>
 #include <iomanip>
-#include <string>
 #include <sstream>
+#include <string>
+
+#ifdef _WIN32
+    #define NOMINMAX
+    #include <Windows.h>
+#endif
 
 namespace zuu {
 
 class DateTime {
 private:
-	using TimePt = std::chrono::steady_clock::time_point;
+    using Clock = std::chrono::system_clock;
+    using TimePoint = Clock::time_point;
 
-	time_t time_{};
-	unsigned ms_{};
+    TimePoint timePoint_{};
+
+    [[nodiscard]]
+    static std::tm localTime(const std::time_t time) noexcept {
+        std::tm result{};
+
+#ifdef _WIN32
+        ::localtime_s(&result, &time);
+#else
+        ::localtime_r(&time, &result);
+#endif
+
+        return result;
+    }
 
 public:
-	inline void now() noexcept {
-		auto now = std::chrono::system_clock::now();
-		time_ = std::chrono::system_clock::to_time_t(now);
-
-		auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()).count();
-		ms_ = ms % 1000;
-	}
-
-    [[nodiscard]] inline std::string datetime(const char* fmt = "%d-%m-%Y %H:%M:%S") const noexcept {
-        auto localTime = *std::localtime(&time_);
-
-		std::string format_str(fmt);
-        bool inject_ms = false;
-
-        auto pos = format_str.find(".%s");
-        if (pos != std::string::npos) {
-            inject_ms = true;
-            format_str.erase(pos, 3); 
-        }
-
-		std::ostringstream oss;
-        oss << std::put_time(&localTime, fmt);
-
-		if (inject_ms) {
-            oss << "." << std::setfill('0') << std::setw(3) << ms_;
-        }
-        
-        return oss.str();
+    void now() noexcept {
+        timePoint_ = Clock::now();
     }
 
-    [[nodiscard]] inline std::string date(const char* fmt = "%d-%m-%Y") const noexcept {
-        auto localTime = *std::localtime(&time_);
-
-		std::ostringstream oss;
-        oss << std::put_time(&localTime, fmt);
-        
-        return oss.str();
-    }
-
-    [[nodiscard]] inline std::string time(const char* fmt = "%H:%M:%S") const {
-        auto localTime = *std::localtime(&time_);
-        
-        std::string format_str(fmt);
-        bool inject_ms = false;
-
-        auto pos = format_str.find(".%s");
-        if (pos != std::string::npos) {
-            inject_ms = true;
-            format_str.erase(pos, 3); 
-        }
+    [[nodiscard]]
+    std::string datetime(const char* fmt = "%d-%m-%Y %H:%M:%S") const {
+        const auto time = Clock::to_time_t(timePoint_);
+        const auto local = localTime(time);
 
         std::ostringstream oss;
-        oss << std::put_time(&localTime, format_str.c_str());
-        
-        if (inject_ms) {
-            oss << "." << std::setfill('0') << std::setw(3) << ms_;
-        }
-        
+        oss << std::put_time(&local, fmt);
+
         return oss.str();
     }
 
-	[[nodiscard]] inline bool isSameDay(const DateTime& dt) const noexcept {
-		auto a = *std::localtime(&time_);
-		auto b = *std::localtime(&dt.time_);
+    [[nodiscard]]
+    std::string date(const char* fmt = "%d-%m-%Y") const {
+        const auto time = Clock::to_time_t(timePoint_);
+        const auto local = localTime(time);
 
-		return a.tm_mday == b.tm_mday && a.tm_mon == b.tm_mon && a.tm_year == b.tm_year;
-	}
+        std::ostringstream oss;
+        oss << std::put_time(&local, fmt);
+
+        return oss.str();
+    }
+
+    [[nodiscard]]
+    std::string time(const char* fmt = "%H:%M:%S") const {
+        const auto time = Clock::to_time_t(timePoint_);
+        const auto local = localTime(time);
+
+        std::ostringstream oss;
+        oss << std::put_time(&local, fmt);
+
+        return oss.str();
+    }
+
+    [[nodiscard]]
+    std::string milliseconds() const {
+        const auto duration = timePoint_.time_since_epoch();
+
+        const auto ms =
+            std::chrono::duration_cast<std::chrono::milliseconds>(duration)
+            % 1000;
+
+        std::ostringstream oss;
+        oss << std::setfill('0')
+            << std::setw(3)
+            << ms.count();
+
+        return oss.str();
+    }
+
+    [[nodiscard]]
+    std::string datetimeMs(
+        const char* fmt = "%d-%m-%Y %H:%M:%S"
+    ) const {
+        const auto time = Clock::to_time_t(timePoint_);
+        const auto local = localTime(time);
+
+        const auto duration = timePoint_.time_since_epoch();
+
+        const auto ms =
+            std::chrono::duration_cast<std::chrono::milliseconds>(duration)
+            % 1000;
+
+        std::ostringstream oss;
+
+        oss << std::put_time(&local, fmt)
+            << '.'
+            << std::setfill('0')
+            << std::setw(3)
+            << ms.count();
+
+        return oss.str();
+    }
+
+    [[nodiscard]]
+    bool isSameDay(const DateTime& other) const noexcept {
+        const auto a = localTime(Clock::to_time_t(timePoint_));
+        const auto b = localTime(Clock::to_time_t(other.timePoint_));
+
+        return a.tm_year == b.tm_year &&
+               a.tm_mon  == b.tm_mon  &&
+               a.tm_mday == b.tm_mday;
+    }
 };
 
 } // namespace zuu

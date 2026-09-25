@@ -11,8 +11,19 @@
 
 using namespace zuu;
 
+BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlType) {
+    switch (ctrlType) {
+        case CTRL_C_EVENT:
+        case CTRL_BREAK_EVENT:
+            return TRUE;
+        default:
+            return FALSE;
+    }
+}
+
 int main() {
     std::ios_base::sync_with_stdio(false);
+	SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
 
 	DateTime dt;
     Logger logger;

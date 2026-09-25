@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.60)
 
 project(
 	TypeCounter
-	VERSION 0.1.0
+	VERSION 0.1.1
 	DESCRIPTION "Application use to collect user type"
 	LANGUAGES CXX C
 )

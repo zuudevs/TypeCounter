@@ -40,7 +40,7 @@ public:
 	using Status = detail_::Status;
 
     explicit KeyInputCollector(Logger& logger) noexcept
-     : logger_(), status_(Status::Idle) {}
+     : logger_(logger), status_(Status::Idle) {}
 
     [[nodiscard]] inline bool isOpen() const noexcept {
         return handle_.is_open();
@@ -157,7 +157,7 @@ public:
 private:
     std::fstream handle_;
     DateTime openedAt_;
-    Logger logger_;
+    Logger& logger_;
     bool isFirstRecord_;
 	Status status_;
 

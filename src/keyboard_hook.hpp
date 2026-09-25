@@ -22,12 +22,19 @@ public:
     }
 
 	[[nodiscard]] bool install() {
+		activeInstance_ = this;
+		
         hook_ = SetWindowsHookEx(
 			WH_KEYBOARD_LL, 
 			lowLevelProc, 
 			GetModuleHandle(NULL), 
 			0
 		);
+
+		if (!hook_) {
+			activeInstance_ = nullptr;
+		}
+
         return hook_ != NULL;
     }
 
