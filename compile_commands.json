@@ -1,0 +1,8 @@
+[
+{
+  "directory": "D:/Project/TypeCounter/out/build/debug",
+  "command": "\"C:\\Program Files\\LLVM\\bin\\clang++.exe\" -ID:/Project/TypeCounter/src -Wno-c2y-extensions -O0 -std=c++17 -D_DEBUG -D_DLL -D_MT -Xclang --dependent-lib=msvcrtd -g -Xclang -gcodeview -o src\\CMakeFiles\\collector.dir\\app.cpp.obj -c D:\\Project\\TypeCounter\\src\\app.cpp",
+  "file": "D:/Project/TypeCounter/src/app.cpp",
+  "output": "D:/Project/TypeCounter/out/build/debug/src/CMakeFiles/collector.dir/app.cpp.obj"
+}
+]
