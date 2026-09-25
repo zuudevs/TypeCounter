@@ -131,6 +131,13 @@ public:
                a.tm_mon  == b.tm_mon  &&
                a.tm_mday == b.tm_mday;
     }
+
+	[[nodiscard]] inline static DateTime Now() noexcept {
+		DateTime dt;
+		dt.now();
+
+		return dt;
+	}
 };
 
 } // namespace zuu

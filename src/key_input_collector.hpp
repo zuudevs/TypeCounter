@@ -3,7 +3,10 @@
 #include "config.hpp"
 #include "date_time.hpp"
 #include "logger.hpp"
+#include "reporter.hpp"
+#include <algorithm>
 #include <fstream>
+#include <ios>
 #include <string>
 #include <filesystem>
 
@@ -35,52 +38,32 @@ inline Status& operator&=(Status& a, Status b) noexcept { return a = a & b; }
 
 } // namespace detail_
 
-class KeyInputCollector {
+class KeyInputCollector : public Reporter {
 public:
 	using Status = detail_::Status;
+	static constexpr const char* stored_at = "data/history/keyboard";
 
     explicit KeyInputCollector(Logger& logger) noexcept
-     : logger_(logger), status_(Status::Idle) {}
-
-    [[nodiscard]] inline bool isOpen() const noexcept {
-        return handle_.is_open();
-    }
+     : Reporter(logger), status_(Status::Idle) {}
 
     inline void initialize() {
-		DateTime dt;
-
-        dt.now();
-		auto collect_dir = std::filesystem::current_path() / records_dir;
-
-		if (!std::filesystem::exists( collect_dir)) {
-			std::filesystem::create_directories(collect_dir);
-		}
-
-        auto filenameWithExt = dt.date() + ".json";
-		auto fullpath = collect_dir / filenameWithExt;
-        bool fileExist = hasContent(fullpath.string());
+		auto basePath = prepareDirectory(stored_at);
+		auto fullpath = basePath / filenameExt();
+        bool fileExist = hasContent(fullpath.string().c_str());
+		auto dt = DateTime::Now();
 
         logger_.write(dt.datetime(), "Info", "Initializing user type storage");
         handle_.open(fullpath, std::ios::in | std::ios::out | std::ios::binary);
 
-        if (!handle_.is_open()) {
-            dt.now();
-            logger_.write(dt.datetime(), "Info", "Trying to create user type storage");
-            
-            std::ofstream creator(fullpath, std::ios::binary);
-            creator.close();
-            handle_.open(fullpath, std::ios::in | std::ios::out | std::ios::binary);
-        }
+		status_ = ((tryOpen(fullpath.string().c_str(), std::ios::out | std::ios::out | std::ios::binary) == 0) ? Status::Error : Status::Running);
 
-        if (!handle_.is_open()) {
-            dt.now();
-            logger_.write(dt.datetime(), "Error", "Can't open store file");
-			status_ = Status::Error;
-            return;
-        }
+		if (status_ == Status::Error) {
+			return;
+		}
 
-		status_ = Status::Running;
-		openedAt_.now();
+		dt.now();
+		std::string msg = "Successfully create " + dt.date() + ".json";
+		logger_.write(dt.datetime(), "Info", msg);
 
         if (!fileExist) {
             handle_ << "[\n";
@@ -92,7 +75,7 @@ public:
     void pushRecord(unsigned vKey, bool isKeyUp) noexcept {
 		DateTime dt;
 
-        if (!handle_.is_open()) {
+        if (!isOpen()) {
 			dt.now();
 			logger_.write(dt.datetime(), "Warning", "Attempted to push record but file is closed");
 			return;
@@ -120,17 +103,9 @@ public:
     }
 
     void close() noexcept {
-        if (!handle_.is_open()) {
-            return;
-        }
-
-        handle_ << "\n]\n" << std::flush;
-        handle_.close();
-
-		DateTime dt;
-
-        dt.now();
-        logger_.write(dt.datetime(), "Info", "Storage file closed successfully");
+		Reporter::close([&]() {
+			handle_ << "\n]\n" << std::flush;
+		});
 
 		status_ = Status::Idle;
     }
@@ -139,7 +114,7 @@ public:
         DateTime dt;
         dt.now();
 
-        if (!openedAt_.isSameDay(dt)) {
+        if (!isSameDay(dt)) {
 			logger_.write(dt.datetime(), "Info", "Day changed, triggering storage rollover");
 			
             close();
@@ -156,14 +131,6 @@ public:
 
 private:
 	Status status_;
-    DateTime openedAt_;
-    Logger& logger_;
-	std::fstream handle_;
-
-    [[nodiscard]] inline bool hasContent(const std::string& targetFile) const noexcept {
-        std::ifstream test(targetFile);
-        return test.is_open() && test.peek() != std::ifstream::traits_type::eof();
-    }
 
     void prepareAppendOnExistingRecord() {
         handle_.seekg(0, std::ios::end);
