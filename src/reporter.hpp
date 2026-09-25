@@ -22,7 +22,7 @@ class Reporter {
 public:
 	explicit Reporter(Logger& logger)
 	 : logger_(logger) {}
-
+	virtual ~Reporter() = default;
 	virtual inline void initialize() = 0;
 
 private:
@@ -53,32 +53,27 @@ protected:
 		return absPath;
 	}
 
-	bool tryOpen(const char* fullpath, int mode) {
-		DateTime dt;
+	bool tryOpen(const char* fullpath, std::ios_base::openmode mode = std::ios::in | std::ios::out | std::ios::binary) {
+		auto dt = DateTime::Now();
 
 		handle_.open(fullpath, mode);
 
 		if (!handle_.is_open()) {
-            dt.now();
-			std::string msg = "Trying to create " + dt.date() + ".json";
-            logger_.write(dt.datetime(), "Info", msg);
+			dt.now();
+			logger_.write(dt.datetime(), "Info", "Creating new file: " + std::string(fullpath));
             
             std::ofstream creator(fullpath, std::ios::binary);
             creator.close();
-            handle_.open(fullpath, std::ios::in | std::ios::out | std::ios::binary);
+            handle_.open(fullpath, mode);
         }
 
         if (!handle_.is_open()) {
             dt.now();
-			std::string msg = "Can't open " + dt.date() + ".json";
-            logger_.write(dt.datetime(), "Error", msg);
+            logger_.write(dt.datetime(), "Error", "Failed to open " + std::string(fullpath));
             return false;
         }
 
-		std::string msg = "Successfully create " + dt.date() + ".json";
-		logger_.write(dt.datetime(), "Info", msg);
-		openedAt_ = std::move(dt);
-
+		openedAt_ = dt;
 		return true;
 	}
 
@@ -103,11 +98,11 @@ protected:
     }
 
 	[[nodiscard]] inline bool isSameDay(const DateTime& dt) const noexcept {
-		return isSameDay(dt);
+		return openedAt_.isSameDay(dt);
 	}
 
 	inline void updateDay(const DateTime& dt) noexcept {
-		openedAt_.now();
+		openedAt_ = dt;
 	}
 };
 

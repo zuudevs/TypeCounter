@@ -6,10 +6,7 @@
 #include <sstream>
 #include <string>
 
-#ifdef _WIN32
-    #define NOMINMAX
-    #include <Windows.h>
-#endif
+
 
 namespace zuu {
 

@@ -47,59 +47,44 @@ public:
      : Reporter(logger), status_(Status::Idle) {}
 
     inline void initialize() {
-		auto basePath = prepareDirectory(stored_at);
-		auto fullpath = basePath / filenameExt();
+        auto basePath = prepareDirectory(stored_at);
+        auto fullpath = basePath / filenameExt();
         bool fileExist = hasContent(fullpath.string().c_str());
-		auto dt = DateTime::Now();
-
+        auto dt = DateTime::Now();
         logger_.write(dt.datetime(), "Info", "Initializing user type storage");
-        handle_.open(fullpath, std::ios::in | std::ios::out | std::ios::binary);
 
-		status_ = ((tryOpen(fullpath.string().c_str(), std::ios::out | std::ios::out | std::ios::binary) == 0) ? Status::Error : Status::Running);
-
-		if (status_ == Status::Error) {
-			return;
-		}
-
-		dt.now();
-		std::string msg = "Successfully create " + dt.date() + ".json";
-		logger_.write(dt.datetime(), "Info", msg);
-
-        if (!fileExist) {
-            handle_ << "[\n";
-        } else {
-            prepareAppendOnExistingRecord();
+        if (!tryOpen(fullpath.string().c_str())) {
+            status_ = Status::Error;
+            return;
         }
+        status_ = Status::Running;
+        // ponytail: tryOpen already logs open; add explicit success log when add metrics
+        if (!fileExist) handle_ << "[\n";
+        else prepareAppendOnExistingRecord();
     }
 
     void pushRecord(unsigned vKey, bool isKeyUp) noexcept {
-		DateTime dt;
-
         if (!isOpen()) {
-			dt.now();
-			logger_.write(dt.datetime(), "Warning", "Attempted to push record but file is closed");
-			return;
-		}
-
-        if (hasStatus(Status::Continue)) {
-            handle_ << ",\n";
+            auto dt = DateTime::Now();
+            logger_.write(dt.datetime(), "Warning", "Attempted to push record but file is closed");
+            return;
         }
-        
+        if (hasStatus(Status::Continue)) handle_ << ",\n";
+
+        auto dt = DateTime::Now(); // ponytail: for now per-key DateTime::Now() cost trivial; batch if high-frequency
         handle_ << "  {\n"
                 << "    \"method\": \"" << (isKeyUp ? "Key Up" : "Key Down") << "\",\n"
                 << "    \"code\": " << vKey << ",\n"
-                << "    \"timestamp\": \"" << dt.datetime("%d-%m-%Y %H:%M:%S.s")  << "\"\n"
-                << "  }";
-        
-        handle_ << std::flush;
+                << "    \"timestamp\": \"" << dt.datetimeMs() << "\"\n"
+                << "  }" << std::flush;
 
-		if (handle_.fail()) {
-			dt.now();
+        if (handle_.fail()) {
+            dt = DateTime::Now();
             logger_.write(dt.datetime(), "Error", "Failed to write record to disk (disk full?)");
-			status_ = Status::Error;
+            status_ = Status::Error;
         } else {
-			addStatus(Status::Continue);
-		}
+            addStatus(Status::Continue);
+        }
     }
 
     void close() noexcept {
