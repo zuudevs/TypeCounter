@@ -34,6 +34,17 @@ private:
     }
 
 public:
+	DateTime() noexcept = default;
+	DateTime(const DateTime&) noexcept = default;
+	DateTime& operator=(const DateTime&) noexcept = default;
+	DateTime(DateTime&&) noexcept = default;
+	DateTime& operator=(DateTime&&) noexcept = default;
+	~DateTime() = default;
+
+	bool operator==(const DateTime& dt) const noexcept {
+		return timePoint_ == dt.timePoint_;
+	}
+
     void now() noexcept {
         timePoint_ = Clock::now();
     }

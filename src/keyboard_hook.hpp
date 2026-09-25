@@ -46,10 +46,10 @@ public:
     }
 
 private:
+	bool ctrlPressed_{false};
 	KeyInputCollector& collector_;
+	HHOOK hook_{NULL};
 	std::function<void()> exitRequested_;
-    HHOOK hook_{NULL};
-    bool ctrlPressed_{false};
 
 	static inline KeyboardHook* activeInstance_ = nullptr;
 

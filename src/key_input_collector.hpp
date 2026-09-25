@@ -155,11 +155,10 @@ public:
     }
 
 private:
-    std::fstream handle_;
+	Status status_;
     DateTime openedAt_;
     Logger& logger_;
-    bool isFirstRecord_;
-	Status status_;
+	std::fstream handle_;
 
     [[nodiscard]] inline bool hasContent(const std::string& targetFile) const noexcept {
         std::ifstream test(targetFile);
