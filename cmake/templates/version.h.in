@@ -1,0 +1,3 @@
+#pragma once
+
+#define TYPECOUNTER_VERSION @TYPECOUNTER_VERSION_CODE@ull
