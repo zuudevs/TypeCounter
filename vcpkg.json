@@ -2,5 +2,9 @@
 	"name": "type-counter",
 	"description": "TypeCounter is an automatic typing counter app with a handy screen widget",
 	"version": "0.1.0",
-	"builtin-baseline": "40f3c709db80acf154ac4b17a1f83c564ebd022e"
+	"builtin-baseline": "40f3c709db80acf154ac4b17a1f83c564ebd022e",
+	"dependencies": [
+		"gtest",
+		"benchmark"
+	]
 }

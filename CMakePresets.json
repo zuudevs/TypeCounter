@@ -13,7 +13,10 @@
 				"CMAKE_CXX_STANDARD_REQUIRED": "ON",
 				"CMAKE_CXX_EXTENSIONS": "OFF",
 				"CMAKE_CXX_FLAGS": "-Wno-c2y-extensions",
-				"CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake"
+				"CMAKE_TOOLCHAIN_FILE": "$env{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake",
+				"CMAKE_RUNTIME_OUTPUT_DIRECTORY": "${sourceDir}/build/${presetName}/bin",
+				"CMAKE_LIBRARY_OUTPUT_DIRECTORY": "${sourceDir}/build/${presetName}/lib",
+				"CMAKE_ARCHIVE_OUTPUT_DIRECTORY": "${sourceDir}/build/${presetName}/lib"
 			}
 		}, {
 			"name": "debug",
