@@ -1,0 +1,125 @@
+{
+  "context": {
+    "date": "2026-10-02T15:07:47+07:00",
+    "host_name": "ZUU",
+    "executable": "D:\\Project\\TypeCounter\\build\\release\\bin\\datetime_benchmark.exe",
+    "num_cpus": 12,
+    "mhz_per_cpu": 2096,
+    "caches": [
+      {
+        "type": "Data",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Instruction",
+        "level": 1,
+        "size": 32768,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 2,
+        "size": 524288,
+        "num_sharing": 2
+      },
+      {
+        "type": "Unified",
+        "level": 3,
+        "size": 4194304,
+        "num_sharing": 6
+      }
+    ],
+    "load_avg": [],
+    "library_version": "v1.9.5",
+    "library_build_type": "release",
+    "json_schema_version": 1
+  },
+  "benchmarks": [
+    {
+      "name": "Datetime_Now/min_time:2.000",
+      "family_index": 0,
+      "per_family_instance_index": 0,
+      "run_name": "Datetime_Now/min_time:2.000",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 89600000,
+      "real_time": 3.3031661830266657e+01,
+      "cpu_time": 3.2958984375000000e+01,
+      "time_unit": "ns"
+    },
+    {
+      "name": "Datetime_FromEpoch/min_time:2.000",
+      "family_index": 1,
+      "per_family_instance_index": 0,
+      "run_name": "Datetime_FromEpoch/min_time:2.000",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 746666667,
+      "real_time": 3.5850800876923725e+00,
+      "cpu_time": 3.5365513377068969e+00,
+      "time_unit": "ns"
+    },
+    {
+      "name": "Datetime_get_datetime_str/min_time:2.000",
+      "family_index": 2,
+      "per_family_instance_index": 0,
+      "run_name": "Datetime_get_datetime_str/min_time:2.000",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 5430303,
+      "real_time": 4.7275861034204064e+02,
+      "cpu_time": 4.7188895352616606e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "Datetime_get_date_str/min_time:2.000",
+      "family_index": 3,
+      "per_family_instance_index": 0,
+      "run_name": "Datetime_get_date_str/min_time:2.000",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 8533333,
+      "real_time": 3.3106404027338817e+02,
+      "cpu_time": 3.2958985662460378e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "Datetime_get_timestamp/min_time:2.000",
+      "family_index": 4,
+      "per_family_instance_index": 0,
+      "run_name": "Datetime_get_timestamp/min_time:2.000",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 5973333,
+      "real_time": 4.7577871516691010e+02,
+      "cpu_time": 4.7345845275995828e+02,
+      "time_unit": "ns"
+    },
+    {
+      "name": "Datetime_get_epoch/min_time:2.000",
+      "family_index": 5,
+      "per_family_instance_index": 0,
+      "run_name": "Datetime_get_epoch/min_time:2.000",
+      "run_type": "iteration",
+      "repetitions": 1,
+      "repetition_index": 0,
+      "threads": 1,
+      "iterations": 943157895,
+      "real_time": 2.9979141509231506e+00,
+      "cpu_time": 2.9820033473822534e+00,
+      "time_unit": "ns"
+    }
+  ]
+}

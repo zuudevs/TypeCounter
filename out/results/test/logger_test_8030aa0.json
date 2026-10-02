@@ -1,0 +1,32 @@
+{
+  "tests": 1,
+  "failures": 0,
+  "disabled": 0,
+  "errors": 0,
+  "timestamp": "2026-10-02T15:17:45Z",
+  "time": "0.003s",
+  "name": "AllTests",
+  "testsuites": [
+    {
+      "name": "unit_test",
+      "tests": 1,
+      "failures": 0,
+      "disabled": 0,
+      "errors": 0,
+      "timestamp": "2026-10-02T15:17:45Z",
+      "time": "0.002s",
+      "testsuite": [
+        {
+          "name": "logger",
+          "file": "D:\/Project\/TypeCounter\/tests\/logger_test.cpp",
+          "line": 5,
+          "status": "RUN",
+          "result": "COMPLETED",
+          "timestamp": "2026-10-02T15:17:45Z",
+          "time": "0.002s",
+          "classname": "unit_test"
+        }
+      ]
+    }
+  ]
+}

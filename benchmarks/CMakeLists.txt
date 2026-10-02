@@ -1,3 +1,20 @@
+function(RunAndExportBenchmarkReport name executable_name)
+	set(FILENAME_POSTFIX_ "")
+	if(NOT GIT_COMMIT_HASH STREQUAL "unknown_hash")
+		set(FILENAME_POSTFIX_ "_${GIT_COMMIT_HASH}")
+	endif()
+	
+    set(RESULT_DIR "${CMAKE_SOURCE_DIR}/out/results/benchmark")
+    add_custom_target(run_and_export_${name}_benchmark_report
+		COMMAND ${CMAKE_COMMAND} -E make_directory "${RESULT_DIR}"
+        COMMAND $<TARGET_FILE:${executable_name}> 
+            --benchmark_out=${RESULT_DIR}/${executable_name}${FILENAME_POSTFIX_}.json
+            --benchmark_out_format=json
+        DEPENDS ${executable_name}
+        COMMENT "Run & Export Report for ${name}"
+    )   
+endfunction()
+
 include("${CMAKE_SOURCE_DIR}/cmake/modules/optimizations.cmake")
 include("${CMAKE_SOURCE_DIR}/cmake/packages/google-benchmark.cmake")
 
@@ -20,6 +37,7 @@ target_link_libraries(
 )
 
 add_release_optimizations_target("datetime_benchmark")
+RunAndExportBenchmarkReport("datetime" "datetime_benchmark")
 
 add_executable(
 	logger_benchmark
@@ -40,3 +58,4 @@ target_link_libraries(
 )
 
 add_release_optimizations_target("logger_benchmark")
+RunAndExportBenchmarkReport("logger" "logger_benchmark")
