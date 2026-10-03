@@ -22,16 +22,21 @@ namespace zuu {
 namespace fs = std::filesystem;
 #endif
 
+#pragma pack(push, 1)
 struct StorageInfo {
-    unsigned char version{TYPECOUNTER_VERSION_MAJOR};
-    unsigned char component{};
     unsigned long long records{};
+	unsigned char version{TYPECOUNTER_VERSION_MAJOR};
+	unsigned char component{};
 };
+#pragma pack(pop)
 
-template <typename Derived, typename RecordType>
+template <typename Derived_, typename RecordType_>
 class Reporter {
 public:
     using Path = fs::path;
+	using Derived = Derived_;
+	using RecordType = RecordType_;
+
     static constexpr size_t MAX_QUEUE_SIZE = 128;
 
     explicit Reporter() noexcept {
@@ -111,7 +116,7 @@ protected:
 
         std::string target_file = derived().provide_name().string();
 
-        AsyncIO::GetInstance().submit_job(
+        AsyncIO::GetInstance().submit_write_job(
             target_file,
             queue_.data(),
             queue_.size() * sizeof(RecordType)
@@ -123,15 +128,15 @@ protected:
 	inline constexpr Derived& derived() noexcept { return *static_cast<Derived*>(this); }
     inline constexpr const Derived& derived() const noexcept { return *static_cast<const Derived*>(this); }
 
-	inline constexpr void provide_name_contract() const { 
-		auto test = derived().provide_name(); 
-		static_assert(std::is_same_v<decltype(test), Path>, R"(provide_name() must in "Path" type)");
-	}
+	// static_assert(
+	// 	std::is_same_v<decltype(std::declval<Reporter>().derived().provide_name()), Path>, 
+	// 	R"(provide_name() must in "Path" type)"
+	// );
 
-	inline constexpr void component_id_contract() { 
-		auto test = Derived::COMPONENT_ID; 
-		static_assert(std::is_integral_v<decltype(test)>, R"(COMPONENT_ID must in integer type)");
-	}
+	static_assert(
+		std::is_integral_v<decltype(Reporter::Derived::COMPONENT_ID)>, 
+		R"(COMPONENT_ID must in integer type)"
+	);
 };
 
 } // namespace zuu

@@ -100,7 +100,7 @@ void Logger::flush_to_worker() {
 		return;
 	}
 
-    AsyncIO::GetInstance().submit_job(
+    AsyncIO::GetInstance().submit_write_job(
         get_current_filepath(),
         text_buffer_.data(),
         text_buffer_.size()
