@@ -1,13 +1,12 @@
 #pragma once
 
-#include <version.hpp>
+#include <datetime.hpp>
 
 #if TYPECOUNTER_VERSION >= 2026000100ull
 
 #include <cstdint>
 #include <string>
 #include <mutex>
-#include <datetime.hpp>
 
 namespace zuu {
 

@@ -1,10 +1,10 @@
 #include <logger.hpp>
+#include <async_io.hpp>
 
 #if TYPECOUNTER_VERSION >= 2026000100ull
 
 #include <iostream>
 #include <filesystem>
-#include <async_io.hpp>
 
 namespace zuu {
 
@@ -21,7 +21,7 @@ enum Severity : uint8_t {
 	Critical
 };
 
-constexpr const char* translate_severity(Severity severity) noexcept {
+[[nodiscard]] static inline constexpr const char* translate_severity(Severity severity) noexcept {
     switch (severity) {
         case Severity::Info: return "[INFO] ";
         case Severity::Warning: return "[WARNING] ";
