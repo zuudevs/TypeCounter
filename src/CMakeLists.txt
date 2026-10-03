@@ -4,6 +4,7 @@ add_library(
 	${LIBRARY_OUTPUT_NAME} 
 		SHARED
 			${CMAKE_CURRENT_SOURCE_DIR}/datetime.cpp
+			${CMAKE_CURRENT_SOURCE_DIR}/async_io.cpp
 			${CMAKE_CURRENT_SOURCE_DIR}/logger.cpp
 )
 

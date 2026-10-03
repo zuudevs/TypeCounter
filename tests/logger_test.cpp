@@ -3,9 +3,7 @@
 #include <logger.hpp>
 
 TEST(unit_test, logger) {
-	EXPECT_EQ(zuu::Logger::GetInstance(), nullptr);
-
-	auto log = zuu::Logger();
+	auto& log = zuu::Logger::GetInstance();
 
 	log.info("this is info message");
 	log.warning("this is warning message");

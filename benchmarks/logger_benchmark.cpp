@@ -15,7 +15,7 @@ inline std::string create_payload(std::size_t len) {
 
 static void Logger_Initializing(benchmark::State& state) {
 	for(auto _ : state) {
-		auto log = zuu::Logger();
+		auto& log = zuu::Logger::GetInstance();
 		benchmark::DoNotOptimize(log);
 		benchmark::ClobberMemory();
 	}
@@ -23,7 +23,7 @@ static void Logger_Initializing(benchmark::State& state) {
 
 static void Logger_Payload16(benchmark::State& state) {
 	std::string payload = create_payload(16);
-	auto log = zuu::Logger();
+	auto& log = zuu::Logger::GetInstance();
 	for(auto _ : state) {
 		log.info(payload);
 		benchmark::ClobberMemory();
@@ -32,7 +32,7 @@ static void Logger_Payload16(benchmark::State& state) {
 
 static void Logger_Payload32(benchmark::State& state) {
 	std::string payload = create_payload(32);
-	auto log = zuu::Logger();
+	auto& log = zuu::Logger::GetInstance();
 	for(auto _ : state) {
 		log.info(payload);
 		benchmark::ClobberMemory();
@@ -41,14 +41,14 @@ static void Logger_Payload32(benchmark::State& state) {
 
 static void Logger_Payload64(benchmark::State& state) {
 	std::string payload = create_payload(64);
-	auto log = zuu::Logger();
+	auto& log = zuu::Logger::GetInstance();
 	for(auto _ : state) {
 		log.info(payload);
 		benchmark::ClobberMemory();
 	}
 }
 
-BENCHMARK(Logger_Initializing)->MinTime(2.0)->Unit(benchmark::kNanosecond);;
-BENCHMARK(Logger_Payload16)->MinTime(2.0)->Unit(benchmark::kNanosecond);;
-BENCHMARK(Logger_Payload32)->MinTime(2.0)->Unit(benchmark::kNanosecond);;
-BENCHMARK(Logger_Payload64)->MinTime(2.0)->Unit(benchmark::kNanosecond);;
+BENCHMARK(Logger_Initializing)->MinTime(2.0)->Unit(benchmark::kNanosecond);
+BENCHMARK(Logger_Payload16)->MinTime(2.0)->Unit(benchmark::kNanosecond);
+BENCHMARK(Logger_Payload32)->MinTime(2.0)->Unit(benchmark::kNanosecond);
+BENCHMARK(Logger_Payload64)->MinTime(2.0)->Unit(benchmark::kNanosecond);
